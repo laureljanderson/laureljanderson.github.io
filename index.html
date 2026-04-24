@@ -637,13 +637,13 @@
         <div class="section-rule"></div>
         <div class="cv-grid">
             <div class="cv-embed-wrap" id="cvPreview" title="Click to view fullscreen">
-                <iframe src="cv/_LAUREL%20ANDERSON_CV_HM_Denim.pdf#toolbar=0&navpanes=0" title="Laurel Anderson CV"></iframe>
+                <iframe src="cv/laurel-anderson-cv.pdf#toolbar=0&navpanes=0" title="Laurel Anderson CV"></iframe>
             </div>
             <div class="cv-sidebar">
                 <p class="cv-desc">Senior fashion designer with over 20 years of experience at H&amp;M, specializing in denim development, collection building, and cross-functional leadership in 3D design implementation.</p>
                 <div class="btn-group">
                     <button class="btn btn-filled" id="cvViewBtn">View Fullscreen</button>
-                    <a href="cv/_LAUREL ANDERSON_CV_HM_Denim.pdf" download class="btn">Download PDF</a>
+                    <a href="cv/laurel-anderson-cv.pdf" download class="btn">Download PDF</a>
                 </div>
             </div>
         </div>
@@ -805,7 +805,7 @@ PROJECTS.forEach((p, i) => {
 });
 
 // ── CV fullscreen ──
-const cvPdf = 'cv/_LAUREL ANDERSON_CV_HM_Denim.pdf';
+const cvPdf = 'cv/laurel-anderson-cv.pdf';
 document.getElementById('cvViewBtn').addEventListener('click', () => {
     openPdf('CV — Laurel Anderson', cvPdf);
 });
