@@ -68,6 +68,7 @@
         /* ── HERO ── */
         #hero {
             min-height: 100vh;
+            min-height: 100svh;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -892,14 +893,20 @@ async function renderPdfPage(num, direction) {
 
         const page = await pdfDoc.getPage(num);
         const stage = pdfCanvas.parentElement;
-        const stageW = stage.clientWidth  - 160; // subtract 80px padding each side
-        const stageH = stage.clientHeight - 140; // subtract 80px top + 60px bottom
+        const isMobile = window.innerWidth <= 900;
+        const hPad = isMobile ? 40 : 160;
+        const vPad = isMobile ? 100 : 140;
+        const stageW = stage.clientWidth  - hPad;
+        const stageH = stage.clientHeight - vPad;
         const vp0 = page.getViewport({ scale: 1 });
-        const scale = Math.min(stageW / vp0.width, stageH / vp0.height);
+        const dpr = window.devicePixelRatio || 1;
+        const scale = Math.min(stageW / vp0.width, stageH / vp0.height) * dpr;
         const vp = page.getViewport({ scale });
 
         pdfCanvas.width  = vp.width;
         pdfCanvas.height = vp.height;
+        pdfCanvas.style.width  = (vp.width  / dpr) + 'px';
+        pdfCanvas.style.height = (vp.height / dpr) + 'px';
 
         await page.render({ canvasContext: pdfCanvas.getContext('2d'), viewport: vp }).promise;
 
