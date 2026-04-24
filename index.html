@@ -292,11 +292,14 @@
         .cv-embed-wrap {
             width: 100%;
             aspect-ratio: 8.5 / 11;
-            background: var(--gray-ghost);
+            background: var(--white);
             overflow: hidden;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .cv-embed-wrap iframe { width: 100%; height: 100%; border: none; }
+        .cv-embed-wrap canvas { width: 100%; height: 100%; display: block; object-fit: contain; }
         .cv-sidebar { position: sticky; top: 100px; }
         .cv-desc {
             font-size: 17px;
@@ -637,7 +640,7 @@
         <div class="section-rule"></div>
         <div class="cv-grid">
             <div class="cv-embed-wrap" id="cvPreview" title="Click to view fullscreen">
-                <iframe src="cv/laurel-anderson-cv.pdf#toolbar=0&navpanes=0" title="Laurel Anderson CV"></iframe>
+                <canvas id="cvPreviewCanvas"></canvas>
             </div>
             <div class="cv-sidebar">
                 <p class="cv-desc">Senior fashion designer with over 20 years of experience at H&amp;M, specializing in denim development, collection building, and cross-functional leadership in 3D design implementation.</p>
@@ -1052,6 +1055,24 @@ function updateArrows(cur, total) {
 function wait(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
+
+// ── CV inline preview (page 1) ──
+(async function renderCvPreview() {
+    const canvas = document.getElementById('cvPreviewCanvas');
+    try {
+        const doc = await pdfjsLib.getDocument(cvPdf).promise;
+        const page = await doc.getPage(1);
+        const wrap = canvas.parentElement;
+        const w = wrap.clientWidth || wrap.offsetWidth;
+        const vp0 = page.getViewport({ scale: 1 });
+        const scale = w / vp0.width;
+        const vp = page.getViewport({ scale });
+        canvas.width  = vp.width;
+        canvas.height = vp.height;
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+        doc.destroy();
+    } catch(e) { /* silent fail */ }
+})();
 </script>
 </body>
 </html>
