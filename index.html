@@ -487,6 +487,21 @@
         #galleryImg.slide-in-left   { opacity: 0; transform: translateX(48px); }
         #galleryImg.slide-in-right  { opacity: 0; transform: translateX(-48px); }
 
+        /* Video */
+        .viewer-video-stage {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .viewer-video-stage.active { display: flex; }
+        #projectVideo {
+            max-width: 100%;
+            max-height: 100%;
+            box-shadow: 0 8px 64px rgba(0,0,0,0.8);
+        }
+
         /* Category tabs (CLO) */
         .viewer-tabs {
             position: absolute;
@@ -690,6 +705,10 @@
         <div class="viewer-gallery-stage" id="galleryStage">
             <img id="galleryImg" src="" alt="CLO 3D Design">
         </div>
+        <!-- Video -->
+        <div class="viewer-video-stage" id="videoStage">
+            <video id="projectVideo" controls playsinline></video>
+        </div>
     </div>
 
     <!-- bottom bar -->
@@ -783,6 +802,13 @@ const PROJECTS = [
         label: 'AI Concept Design',
         type: 'pdf',
         pdf: 'projects/Midjourney Images/MIDJOURNEY IMAGES.pdf',
+    },
+    {
+        id: 'wwf',
+        name: 'WWF Invest in the future',
+        label: 'Campaign',
+        type: 'video',
+        video: 'projects/WWF Invest in the future/WWF.mp4',
     }
 ];
 
@@ -836,6 +862,8 @@ const viewerTabs   = document.getElementById('viewerTabs');
 const pdfCanvas    = document.getElementById('pdfCanvas');
 const galleryStage = document.getElementById('galleryStage');
 const galleryImg   = document.getElementById('galleryImg');
+const videoStage   = document.getElementById('videoStage');
+const projectVideo = document.getElementById('projectVideo');
 
 let mode = null;       // 'pdf' | 'gallery'
 let pdfDoc = null;
@@ -850,9 +878,29 @@ let galImgIndex = 0;
 function openProject(p) {
     if (p.type === 'pdf') {
         openPdf(p.name, p.pdf);
+    } else if (p.type === 'video') {
+        openVideo(p);
     } else {
         openGallery(p);
     }
+}
+
+// ── Open video viewer ──
+function openVideo(p) {
+    mode = 'video';
+    viewerTitle.textContent = p.name;
+    pdfCanvas.style.display = 'none';
+    galleryStage.classList.remove('active');
+    videoStage.classList.add('active');
+    viewerTabs.classList.remove('active');
+    viewerTabs.innerHTML = '';
+    viewerCounter.textContent = '';
+    viewerPrev.disabled = true;
+    viewerNext.disabled = true;
+
+    projectVideo.src = p.video;
+    showViewer();
+    projectVideo.play();
 }
 
 // ── Open PDF viewer ──
@@ -861,6 +909,7 @@ async function openPdf(title, url) {
     viewerTitle.textContent = title;
     pdfCanvas.style.display = 'block';
     galleryStage.classList.remove('active');
+    videoStage.classList.remove('active');
     viewerTabs.classList.remove('active');
     viewerTabs.innerHTML = '';
 
@@ -932,6 +981,7 @@ function openGallery(p) {
     viewerTitle.textContent = p.name;
     pdfCanvas.style.display = 'none';
     galleryStage.classList.add('active');
+    videoStage.classList.remove('active');
 
     galCategories = p.categories;
     galCatIndex = 0;
@@ -1026,6 +1076,9 @@ function closeViewer() {
     viewer.classList.remove('open');
     document.body.style.overflow = '';
     if (pdfDoc) { pdfDoc.destroy(); pdfDoc = null; }
+    projectVideo.pause();
+    projectVideo.src = '';
+    videoStage.classList.remove('active');
 }
 
 viewerClose.addEventListener('click', closeViewer);
